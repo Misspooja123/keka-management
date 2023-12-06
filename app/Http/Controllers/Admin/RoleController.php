@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\DataTables\RoleDataTable;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
     //
-    public function index(RoleDataTable $dataTable)
+    public function index(RoleDataTable $dataTable, Request $request)
     {
         $permissions = Permission::all();
 
@@ -33,12 +34,34 @@ class RoleController extends Controller
         $marksheet_name = $permissions->where('module', 'marksheet')->pluck('name');
 
         $role_module = $permissions->where('module', 'role')->pluck('module')->unique();
+        // $role_name = $permissions->where('module', 'role')->pluck('name');
         $role_name = $permissions->where('module', 'role')->pluck('name');
+
 
         $adminuser_module = $permissions->where('module', 'adminuser')->pluck('module')->unique();
         $adminuser_name = $permissions->where('module', 'adminuser')->pluck('name');
 
         return $dataTable->render('admin.auth.role.index', compact('dashboard_module', 'dashboard_name', 'attendance_module', 'attendance_name', 'leave_module', 'leave_name', 'department_module', 'department_name', 'employee_module', 'employee_name', 'marksheet_module', 'marksheet_name', 'role_module', 'role_name', 'adminuser_module', 'adminuser_name'));
+    }
 
+    public function storeRole(Request $request)
+    {
+
+        // dd($request);
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $role = Role::create([
+            'name' => $request->input('name'),
+            'guard_name' => 'admin'
+        ]);
+
+        $permission = $role->syncPermissions($request->input('module_permissions'));
+
+        $role->givePermissionTo($permission);
+        $permission->assignRole($role);
+
+        return redirect()->back()->with('success', 'Role created successfully!');
     }
 }

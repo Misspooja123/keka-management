@@ -104,11 +104,11 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::get('download/marksheet/{id}', 'MarksheetController@download')->name('download.marksheet');
 
         // Route::get('notification','NotificationController@index')->name('notification');
-
         Route::put('notification/update/{id}', 'NotificationController@update')->name('notification.update');
 
         Route::get('role', 'RoleController@index')->name('role.index');
-        // Route::post('role' )
+        Route::post('roles/store', 'RoleController@storeRole')->name('roles.store');
+
 
     });
 });

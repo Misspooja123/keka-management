@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\Role;
+
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -11,6 +11,7 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Spatie\Permission\Models\Role;
 
 class RoleDataTable extends DataTable
 {
@@ -62,15 +63,15 @@ class RoleDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
+            Column::make('id')->hidden(),
+            Column::make('name'),
+            Column::make('guard_name'),
             Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
-            Column::make('id'),
-            Column::make('add your columns'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-left'),
         ];
     }
 
