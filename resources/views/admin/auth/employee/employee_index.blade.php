@@ -12,7 +12,9 @@
         <div class="card">
             <div class="card-header">
                 Manage Employee
-                <button id="addEmployeeButton" class="btn btn-primary float-right">Add Employee</button>
+                @can('employee_create')
+                    <button id="addEmployeeButton" class="btn btn-primary float-right">Add Employee</button>
+                @endcan
             </div>
             <div class="card-body">
                 <div class="table-container">
@@ -34,6 +36,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <form id="addEmployeeForm">
                     @csrf
                     <div class="modal-body">
@@ -275,7 +278,7 @@
                                 var dataTable = $('#employee-table')
                                     .DataTable();
                                 dataTable.ajax.reload();
-                               resetForm();
+                                resetForm();
 
                             },
                             // error: function(error) {
@@ -345,6 +348,7 @@
                         }
                     });
                 });
+
                 function resetEditForm() {
                     // Reset form fields
                     $('#editUserForm')[0].reset();
@@ -516,14 +520,14 @@
                                     Swal.fire('Error',
                                         'Failed to update employee record.',
                                         'error');
-                                        resetEditForm();
+                                    resetEditForm();
                                 }
                             },
                             error: function(error) {
                                 Swal.fire('Error',
                                     'Failed to update employee record.',
                                     'error');
-                                    resetEditForm();
+                                resetEditForm();
                             }
                         });
                     }

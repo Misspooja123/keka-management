@@ -22,10 +22,24 @@ class RoleDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
+        $admin = Auth()->guard('admin')->user();
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'role.action')
-            ->setRowId('id');
+            ->addColumn('action', function ($data) use ($admin) {
+
+                $result = '';
+                if ($admin->can('role_edit')) {
+                    $result .= '<button  class="edit_btn btn btn-primary btn-sm" data-id="' . $data->id . '"><i class="fas fa-edit"></i></button>&nbsp ';
+                }
+                if ($admin->can('role_delete')) {
+                    $result .= '<button class="delete-btn btn btn-danger btn-sm" data-id="' . $data->id . '"><i class="fas fa-trash"></i></button>&nbsp&nbsp';
+                }
+                return $result;
+            })
+
+            ->rawColumns(['action'])
+            ->addIndexColumn();
     }
+
 
     /**
      * Get the query source of dataTable.
@@ -41,20 +55,20 @@ class RoleDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('role-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(1)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
-                    ]);
+            ->setTableId('role-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            //->dom('Bfrtip')
+            ->orderBy(1)
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
     }
 
     /**
@@ -65,7 +79,7 @@ class RoleDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
-            Column::make('name'),
+            Column::make('name')->searchable(true),
             Column::make('guard_name'),
             Column::computed('action')
                 ->exportable(false)

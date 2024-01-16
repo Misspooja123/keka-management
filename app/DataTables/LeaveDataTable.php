@@ -21,22 +21,20 @@ class LeaveDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
+        $admin = Auth()->guard('admin')->user();
         return (new EloquentDataTable($query))
-            // ->addColumn('action', 'leave.action')
-
-            ->addColumn('action', function ($data) {
+            ->addColumn('action', function ($data) use ($admin) {
 
                 $result = '';
-
-                $result .= '<button class="action-buttons view_btn btn btn-primary btn-sm" data-leave-id="' . $data->id . '"><i class="fas fa-eye"></i></button> ';
+                if ($admin->can('leave_view')) {
+                    $result .= '<button class="action-buttons view_btn btn btn-primary btn-sm" data-leave-id="' . $data->id . '"><i class="fas fa-eye"></i></button> ';
+                }
                 if ($data->status == 0) {
                     $result .= '<button class="approve_btn btn btn-success btn-sm changeStatus" data-leave-id="' . $data->id . '">Approve</button>&nbsp;&nbsp;';
                     $result .= '<button class="reject_btn btn btn-danger btn-sm changeStatus" data-leave-id="' . $data->id . '">Reject</button>';
-                }
-                else if($data->status == 1){
+                } else if ($data->status == 1) {
                     $result .= '<button class="reject_btn btn btn-danger btn-sm changeStatus" data-leave-id="' . $data->id . '">Reject</button>';
-                }
-                else{
+                } else {
                     $result .= '<button class="approve_btn btn btn-success btn-sm changeStatus" data-leave-id="' . $data->id . '">Approve</button>&nbsp;&nbsp;';
                 }
 
@@ -46,11 +44,9 @@ class LeaveDataTable extends DataTable
             ->editColumn('status', function ($data) {
                 if ($data->status == 0) {
                     return '<span class="badge badge-primary">Pending...</span>';
-                }
-                else if($data->status == 1){
+                } else if ($data->status == 1) {
                     return '<span class="badge badge-success">Approve</span>';
-                }
-                else {
+                } else {
                     return '<span class="badge badge-danger">Reject</span>';
                 }
             })
@@ -64,17 +60,17 @@ class LeaveDataTable extends DataTable
                 }
             })
 
-            ->editColumn('user_name', function ($data) {
+            ->editColumn('user_id', function ($data) {
                 return $data->user->name;
             })
 
-            ->filterColumn('user_name', function ($query, $keyword) {
+            ->filterColumn('user_id', function ($query, $keyword) {
                 $query->whereHas('user', function ($query) use ($keyword) {
                     $query->where('name', 'like', "%{$keyword}%");
                 });
             })
 
-            ->rawColumns(['action', 'status' , 'leave_status', 'user_name'])
+            ->rawColumns(['action', 'status', 'leave_status', 'user_id'])
             ->addIndexColumn();
 
         // ->setRowId('id');
@@ -87,7 +83,6 @@ class LeaveDataTable extends DataTable
     {
 
         return $model->newQuery();
-
     }
 
     /**
@@ -120,7 +115,7 @@ class LeaveDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
-            Column::make('user_name')->title('User Name')->searchable(true),
+            Column::make('user_id')->title('User Name')->searchable(true),
             Column::make('startdatetime')->title('Start Date Time'),
             Column::make('enddatetime')->title('End Date Time'),
             Column::make('leave_reason')->title('Leave Reason'),

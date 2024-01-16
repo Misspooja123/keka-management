@@ -54,23 +54,18 @@ class UserLeaveDataTable extends DataTable
                 }
             })
 
-            // ->editColumn('user_name',  function ($data) {
-            //     return optional($data->user)->name;
-            // })
-
-            ->editColumn('user_name', function ($data) {
+            ->editColumn('user_id', function ($data) {
                 return $data->user->name;
             })
 
-            ->filterColumn('user_name', function ($query, $keyword) {
+            ->filterColumn('user_id', function ($query, $keyword) {
                 $query->whereHas('user', function ($query) use ($keyword) {
                     $query->where('name', 'like', "%{$keyword}%");
                 });
             })
 
-            ->rawColumns(['action', 'status', 'leave_status','user_name'])
+            ->rawColumns(['action', 'status', 'leave_status','user_id'])
             ->addIndexColumn();
-        // ->setRowId('id');
     }
 
     /**
@@ -116,15 +111,7 @@ class UserLeaveDataTable extends DataTable
             Column::make('enddatetime')->title('End Date Time'),
             Column::make('leave_status')->title('Leave Type'),
             Column::make('status')->title('Status'),
-            // Column::make('user_name')->title('Requested By'),
-            Column::make('user_name')->title('User Name')->searchable(true),
-                // ->editColumn('user_name',  function ($data) {
-                //     return optional($data->user)->name;
-                // })
-                // ->filterColumn('user_name', function ($query, $keyword) {
-                //     $query->where('users.name', 'LIKE', "%{$keyword}%");
-                // }),
-
+            Column::make('user_id')->title('User Name')->searchable(true),
             Column::make('leave_reason')->title('Leave Note'),
             Column::computed('action')
                 ->exportable(false)

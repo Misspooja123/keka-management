@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\AdminController;
 use App\Models\Leave;
+use Illuminate\Validation\Rules\Can;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,44 +72,67 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
 
 Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function () {
     Route::match(['get', 'post'], 'login', 'AdminController@login');
-    Route::group(['middleware' => ['admin']], function () {
-        Route::get('dashboard', 'AdminController@dashboard');
+    Route::group(['middleware' => ['auth:admin']], function () {
+        Route::group(['middleware' => ['permission:dashboard_view']], function () {
+            Route::get('dashboard', 'AdminController@dashboard');
+        });
         Route::get('logout', 'AdminController@logout');
-        Route::get('attendance', 'AdminController@index')->name('attendance.index');
-        Route::get('attendance/edit/{id}', 'AdminController@edit')->name('attendance.edit');
-        Route::put('attendance/update/{id}', 'AdminController@update')->name('attendance.update');
+        Route::group(['middleware' => ['permission:attendance_view']], function () {
+            Route::get('attendance', 'AdminController@index')->name('attendance.index');
+            Route::get('attendance/edit/{id}', 'AdminController@edit')->name('attendance.edit');
+            Route::put('attendance/update/{id}', 'AdminController@update')->name('attendance.update');
+        });
 
-        Route::get('leave', 'LeaveStatusController@index')->name('leave_status');
-        Route::post('leave/approve/{id}', 'LeaveStatusController@approve')->name('leave.approve');
-        Route::post('leave/reject/{id}', 'LeaveStatusController@reject')->name('leave.reject');
-        Route::get('leave/view/{id}', 'LeaveStatusController@view')->name('leave.view');
+        Route::group(['middleware' => ['permission:leave_view']], function () {
+            Route::get('leave', 'LeaveStatusController@index')->name('leave_status');
+            Route::post('leave/approve/{id}', 'LeaveStatusController@approve')->name('leave.approve');
+            Route::post('leave/reject/{id}', 'LeaveStatusController@reject')->name('leave.reject');
+            Route::get('leave/view/{id}', 'LeaveStatusController@view')->name('leave.view');
+        });
 
-        Route::get('department', 'DepartmentController@index')->name('department_index');
-        Route::post('department', 'DepartmentController@store')->name('departments.store');
-        Route::delete('department/{id}', 'DepartmentController@destroy')->name('departments.destroy');
-        Route::get('department/edit/{id}', 'DepartmentController@edit')->name('department.edit');
-        Route::put('department/update/{id}', 'DepartmentController@update')->name('department.update');
-        Route::put('department/toggle-status/{id}', 'DepartmentController@toggleStatus')->name('department.status');
-        Route::get('validate-name', 'DepartmentController@validatedepartmentname')->name('name.validation');
+        Route::group(['middleware' => ['permission:department_view']], function () {
+            Route::get('department', 'DepartmentController@index')->name('department_index');
+            Route::post('department', 'DepartmentController@store')->name('departments.store');
+            Route::delete('department/{id}', 'DepartmentController@destroy')->name('departments.destroy');
+            Route::get('department/edit/{id}', 'DepartmentController@edit')->name('department.edit');
+            Route::put('department/update/{id}', 'DepartmentController@update')->name('department.update');
+            Route::put('department/toggle-status/{id}', 'DepartmentController@toggleStatus')->name('department.status');
+            Route::get('validate-name', 'DepartmentController@validatedepartmentname')->name('name.validation');
+        });
 
-        Route::get('employee', 'EmployeeController@index')->name('employee.index');
-        Route::post('employee', 'EmployeeController@store')->name('employees.store');
-        Route::delete('employee/{id}', 'EmployeeController@destroy')->name('employees.destroy');
-        Route::put('employee/toggle-status/{id}', 'EmployeeController@toggleStatus')->name('employees.status');
-        Route::get('employee/edit/{id}', 'EmployeeController@edit')->name('employees.edit');
-        Route::put('employee/update/{id}', 'EmployeeController@update')->name('employees.update');
-        Route::get('validate-email', 'EmployeeController@validateuseremail')->name('email.validation');
-        Route::get('validate-mobile', 'EmployeeController@validateusermobile')->name('mobile.validation');
+        Route::group(['middleware' => ['permission:employee_view']], function () {
+            Route::get('employee', 'EmployeeController@index')->name('employee.index');
+            Route::post('employee', 'EmployeeController@store')->name('employees.store');
+            Route::delete('employee/{id}', 'EmployeeController@destroy')->name('employees.destroy');
+            Route::put('employee/toggle-status/{id}', 'EmployeeController@toggleStatus')->name('employees.status');
+            Route::get('employee/edit/{id}', 'EmployeeController@edit')->name('employees.edit');
+            Route::put('employee/update/{id}', 'EmployeeController@update')->name('employees.update');
+            Route::get('validate-email', 'EmployeeController@validateuseremail')->name('email.validation');
+            Route::get('validate-mobile', 'EmployeeController@validateusermobile')->name('mobile.validation');
+        });
 
-        Route::get('marksheet', 'MarksheetController@index')->name('marksheet.index');
-        Route::get('download/marksheet/{id}', 'MarksheetController@download')->name('download.marksheet');
+        Route::group(['middleware' => ['permission:marksheet_view']], function () {
+            Route::get('marksheet', 'MarksheetController@index')->name('marksheet.index');
+            Route::get('download/marksheet/{id}', 'MarksheetController@download')->name('download.marksheet');
+        });
 
         // Route::get('notification','NotificationController@index')->name('notification');
         Route::put('notification/update/{id}', 'NotificationController@update')->name('notification.update');
 
-        Route::get('role', 'RoleController@index')->name('role.index');
-        Route::post('roles/store', 'RoleController@storeRole')->name('roles.store');
+        Route::group(['middleware' => ['permission:role_view']], function () {
+            Route::get('role', 'RoleController@index')->name('role.index');
+            Route::post('roles/store', 'RoleController@storeRole')->name('roles.store');
+            Route::get('roles/edit/{id}', 'RoleController@edit')->name('roles.edit');
+            Route::put('roles/update/{id}', 'RoleController@update')->name('roles.update');
+            Route::delete('roles/{id}', 'RoleController@destroy')->name('roles.destroy');
+        });
 
-
+        Route::group(['middleware' => ['permission:adminuser_view']], function () {
+            Route::get('adminuser', 'AdminUserController@index')->name('adminusers.index');
+            Route::post('adminuser', 'AdminUserController@store')->name('adminusers.store');
+            Route::get('adminuser/edit/{id}', 'AdminUserController@edit')->name('adminuser.edit');
+            Route::put('adminuser/update/{id}', 'AdminUserController@update')->name('adminuser.update');
+            Route::get('validate-admin-email', 'AdminUserController@validateuseremail')->name('email.validation');
+        });
     });
 });

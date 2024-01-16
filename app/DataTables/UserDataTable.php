@@ -21,13 +21,17 @@ class UserDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
+        $admin = Auth()->guard('admin')->user();
         return (new EloquentDataTable($query))
-            ->addColumn('action', function ($data) {
+            ->addColumn('action', function ($data) use ($admin) {
 
                 $result = '';
-
-                $result .= '<button class="edit_btn btn btn-primary btn-sm" data-id="' . $data->id . '"><i class="fas fa-edit"></i></button>&nbsp ';
-                $result .= '<button class="delete-btn btn btn-danger btn-sm" data-id="' . $data->id . '"><i class="fas fa-trash"></i></button>&nbsp&nbsp';
+                if ($admin->can('employee_edit')) {
+                    $result .= '<button class="edit_btn btn btn-primary btn-sm" data-id="' . $data->id . '"><i class="fas fa-edit"></i></button>&nbsp ';
+                }
+                if ($admin->can('employee_delete')) {
+                    $result .= '<button class="delete-btn btn btn-danger btn-sm" data-id="' . $data->id . '"><i class="fas fa-trash"></i></button>&nbsp&nbsp';
+                }
                 if ($data->status == 1) {
                     $result .= '<button class="status-btn btn btn-success btn-sm" data-id="' . $data->id . '" data-status="1"><i class="fas fa-toggle-on"></i> </button>';
                 } else {
@@ -35,25 +39,24 @@ class UserDataTable extends DataTable
                 }
                 return $result;
             })
-            ->editColumn('department_name', function ($data) {
+            ->editColumn('department_id', function ($data) {
                 return $data->department->name;
             })
 
             ->editColumn('status', function ($data) {
                 if ($data->status == 0) {
                     return '<span class="badge badge-secondary">Inactive</span>';
-                }
-                else{
+                } else {
                     return '<span class="badge badge-success">Active</span>';
                 }
             })
-            ->filterColumn('department_name', function ($query, $keyword) {
+            ->filterColumn('department_id', function ($query, $keyword) {
                 $query->whereHas('department', function ($query) use ($keyword) {
                     $query->where('name', 'like', "%{$keyword}%");
                 });
             })
 
-            ->rawColumns(['action','status'])
+            ->rawColumns(['action', 'status'])
             ->addIndexColumn();
     }
 
@@ -96,13 +99,13 @@ class UserDataTable extends DataTable
 
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
-            Column::make('name')->searchable(true),
-            Column::make('department_name'),
-          //  Column::make('department.name')->title('Department Name'),
-            Column::make('email'),
-            Column::make('mobile_no'),
-            Column::make('address'),
-            Column::make('status'),
+            Column::make('name')->title('User Name')->searchable(true),
+            Column::make('department_id')->title('Department Name'),
+            //  Column::make('department.name')->title('Department Name'),
+            Column::make('email')->title('Email'),
+            Column::make('mobile_no')->title('Mobile No'),
+            Column::make('address')->title('Address'),
+            Column::make('status')->title('Status'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

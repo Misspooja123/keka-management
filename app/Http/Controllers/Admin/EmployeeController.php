@@ -74,7 +74,6 @@ class EmployeeController extends Controller
 
     public function update(Request $request, $id)
     {
-
         $emp = User::find($id);
         if (!$emp) {
             return response()->json(['success' => false, 'message' => 'Record not found']);
@@ -82,7 +81,6 @@ class EmployeeController extends Controller
         $emp->department_id = $request->input('department_id');
         $emp->mobile_no = $request->input('mobile_no');
         $emp->address = $request->input('address');
-      //  $emp->status = $request->input('status');
         $emp->save();
         return response()->json(['success' => true, 'message' => 'Update successful']);
     }

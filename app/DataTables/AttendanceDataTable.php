@@ -22,19 +22,16 @@ class AttendanceDataTable extends DataTable
      */
     public function dataTable($query, Request $request): EloquentDataTable
     {
+        $admin = Auth()->guard('admin')->user();
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('action', function ($data) {
+            ->addColumn('action', function ($data) use ($admin) {
                 $result = "";
 
-                // if ($data->status == 1) {
-                //     $result .= '<button type="button" class="btn btn-secondary btn-sm changeStatus" status="0" title="click to Activate" category_id="' . $data->id . '"><i class="fas fa-unlock"></i></button> ';
-                // } else {
-                //     $result .= '<button type="button" class="btn btn-danger btn-sm changeStatus" status="1" title="click to Inactivate" category_id="' . $data->id . '"><i class="fas fa-lock"></i></button> ';
-                // }
-                $result .= '<button class="edit-btn btn btn-primary btn-sm" title="Edit Attendance" data-toggle="modal" data-target="#product_edit_modal"  data-starttime="' . $data->starttime . '" data-endtime="' . $data->endtime . '" data-id="' . $data->id . '"><i class="fa fa-edit"></i></button>';
-
+                if ($admin->can('attendance_edit')) {
+                    $result .= '<button class="edit-btn btn btn-primary btn-sm" title="Edit Attendance" data-toggle="modal" data-target="#product_edit_modal"  data-starttime="' . $data->starttime . '" data-endtime="' . $data->endtime . '" data-id="' . $data->id . '"><i class="fa fa-edit"></i></button>';
+                }
                 return $result;
             })
 

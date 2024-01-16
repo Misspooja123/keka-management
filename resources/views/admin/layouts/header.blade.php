@@ -61,21 +61,21 @@
                 @endphp
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-bell" onclick="toggleDropdown()"></i>
-                    <span class="badge badge-warning navbar-badge" style="right: -5px; top: 3px; padding: 2px"
+                    <span class="badge badge-warning navbar-badge" style="right: -1px; top: 2px; padding: 3px"
                         id="userCount">{{ $userCount }}</span>
                 </a>
                 @php
                     $userCount = App\Models\User::where('is_read', 1)->count();
                 @endphp
 
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header" id="notificationCount">{{ $userCount }}
-                            Notifications</span>
-                        <div class="dropdown-divider"></div>
-                        @php
-                            $user = App\Models\User::all();
-                        @endphp
-                         <div class="drop_msg p-2">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-item dropdown-header" id="notificationCount">{{ $userCount }}
+                        Notifications</span>
+                    <div class="dropdown-divider"></div>
+                    @php
+                        $user = App\Models\User::all();
+                    @endphp
+                    <div class="drop_msg p-2">
                         @foreach ($user as $data)
                             <div class="update_status @if ($data->is_read) text-secondary @else text-success @endif"
                                 style="border: none; cursor: pointer; display:flex;"
@@ -85,9 +85,9 @@
                         @endforeach
                     </div>
 
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                </div>
 
             </li>
         </div>
@@ -113,7 +113,6 @@
                             var userCountElement = document.getElementById('notificationCount');
                             userCountElement.textContent = (parseInt(userCountElement.textContent) - 1) +
                                 ' Notifications';
-
                         },
                         error: function(error) {
                             Swal.fire('Error', 'Could not mark as read', 'error');
@@ -122,14 +121,6 @@
                 }
             }
         </script>
-
-
-
-
-
-
-
-
 
         <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -142,6 +133,19 @@
                 <i class="fas fa-th-large"></i>
             </a>
         </li>
+
+        <li class="nav-item d-none d-sm-inline-block">
+            @php
+                $user = Auth::guard('admin')->user()->name;
+            @endphp
+            <span class="nav-link">{{ $user }}</span>
+        </li>
+        {{-- <li class="nav-item">
+            @php
+                $user = Auth::guard('admin')->name;
+            @endphp
+            <h3> {{ $user }} </h3>
+        </li> --}}
     </ul>
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container">
@@ -153,6 +157,5 @@
         </div>
     </nav>
 </nav>
-
 
 <!-- /.navbar -->

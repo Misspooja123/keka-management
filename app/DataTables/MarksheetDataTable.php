@@ -35,17 +35,17 @@ class MarksheetDataTable extends DataTable
                     return '<span class="badge badge-danger">Fail</span>';
                 }
             })
-            ->editColumn('user_name', function ($data) {
+            ->editColumn('user_id', function ($data) {
                 return $data->user->name;
             })
 
-            ->filterColumn('user_name', function ($query, $keyword) {
+            ->filterColumn('user_id', function ($query, $keyword) {
                 $query->whereHas('user', function ($query) use ($keyword) {
                     $query->where('name', 'like', "%{$keyword}%");
                 });
             })
 
-            ->rawColumns(['action', 'user_name', 'status'])
+            ->rawColumns(['action', 'user_id', 'status'])
             ->addIndexColumn();
     }
 
@@ -87,14 +87,7 @@ class MarksheetDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
-            Column::make('user_name')->title('User Name')->searchable(true),
-            // Column::make('bio'),
-            // Column::make('mathematics'),
-            // Column::make('science'),
-            // Column::make('socialscience'),
-            // Column::make('english'),
-            // Column::make('gujarati'),
-            // Column::make('hindi'),
+            Column::make('user_id')->title('User Name')->searchable(true),
             Column::make('total'),
             Column::make('percentage'),
             Column::make('status'),

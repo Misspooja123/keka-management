@@ -12,7 +12,9 @@
         <div class="card">
             <div class="card-header">
                 Manage Department
-                <button id="addDepartmentButton" class="btn btn-primary float-right">Add Department</button>
+                @can('department_create')
+                    <button id="addDepartmentButton" class="btn btn-primary float-right">Add Department</button>
+                @endcan
             </div>
             <div class="card-body">
                 <div class="table-container">
@@ -34,6 +36,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <form id="addDepartmentForm">
                     @csrf
                     <div class="modal-body">
@@ -295,14 +298,14 @@
                                     Swal.fire('Error',
                                         'Failed to update department record.',
                                         'error');
-                                        resetEditForm();
+                                    resetEditForm();
                                 }
                             },
                             error: function(error) {
                                 Swal.fire('Error',
                                     'Failed to update department record.',
                                     'error');
-                                    resetEditForm();
+                                resetEditForm();
                             }
                         });
                     }

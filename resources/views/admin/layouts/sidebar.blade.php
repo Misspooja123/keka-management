@@ -35,7 +35,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-
+                @can('dashboard_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/dashboard') }}" class="nav-link">
                         <i class="fas fa-tachometer-alt fa-sm nav-icon"></i>
@@ -44,7 +44,10 @@
                         </p>
                     </a>
                 </li>
+                @endcan
 
+                {{-- @dd(auth()->guard('admin')->user()) --}}
+                @can('attendance_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/attendance') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
@@ -53,17 +56,18 @@
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('leave_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/leave') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
-
                         <p>
                             Leaves
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('department_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/department') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
@@ -73,47 +77,47 @@
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('employee_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/employee') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
-
                         <p>
                             Employees
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('marksheet_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/marksheet') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
-
                         <p>
                             Marksheet
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('role_view')
                 <li class="nav-item">
                     <a href="{{ url('admin/role') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
-
                         <p>
                             Role
                         </p>
                     </a>
                 </li>
-
+                @endcan
+                @can('adminuser_view')
                 <li class="nav-item">
-                    <a href="{{ url('admin/marksheet') }}" class="nav-link">
+                    <a href="{{ url('admin/adminuser') }}" class="nav-link">
                         <i class="fa-solid fa-user fa-sm nav-icon"></i>
-
                         <p>
                             AdminUser
                         </p>
                     </a>
                 </li>
-
+                @endcan
             </ul>
         </nav>
 

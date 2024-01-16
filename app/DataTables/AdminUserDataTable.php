@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\Department;
+use App\Models\Admin;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -12,7 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class DepartmentDataTable extends DataTable
+class AdminUserDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -26,35 +26,30 @@ class DepartmentDataTable extends DataTable
             ->addColumn('action', function ($data) use ($admin) {
 
                 $result = '';
-                if ($admin->can('department_edit')) {
+                if ($admin->can('adminuser_edit')) {
                     $result .= '<button class="edit_btn btn btn-primary btn-sm" data-id="' . $data->id . '"><i class="fas fa-edit"></i></button>&nbsp ';
-                }
-                if ($admin->can('department_delete')) {
-                    $result .= '<button class="delete-btn btn btn-danger btn-sm" data-id="' . $data->id . '"><i class="fas fa-trash"></i></button>&nbsp&nbsp';
-                }
-                if ($data->status == 1) {
-                    $result .= '<button class="status-btn btn btn-success btn-sm" data-id="' . $data->id . '" data-status="1"><i class="fas fa-toggle-on"></i> </button>';
-                } else {
-                    $result .= '<button class="status-btn btn btn-secondary btn-sm" data-id="' . $data->id . '" data-status="0"><i class="fas fa-toggle-off"></i> </button>';
                 }
                 return $result;
             })
-            ->editColumn('status', function ($data) {
-                if ($data->status == 0) {
-                    return '<span class="badge badge-secondary">Inactive</span>';
-                } else {
-                    return '<span class="badge badge-success">Active</span>';
-                }
-            })
 
-            ->rawColumns(['action', 'status'])
+            // ->editColumn('role_name', function ($data) {
+            //     return $data->role->name;
+            // })
+
+            // ->filterColumn('role_name', function ($query, $keyword) {
+            //     $query->whereHas('role', function ($query) use ($keyword) {
+            //         $query->where('name', 'like', "%{$keyword}%");
+            //     });
+            // })
+
+            ->rawColumns(['action'])
             ->addIndexColumn();
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(Department $model): QueryBuilder
+    public function query(Admin $model): QueryBuilder
     {
         return $model->newQuery();
     }
@@ -65,7 +60,7 @@ class DepartmentDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('department-table')
+            ->setTableId('adminuser-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             //->dom('Bfrtip')
@@ -90,22 +85,21 @@ class DepartmentDataTable extends DataTable
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
             Column::make('name'),
-            Column::make('status'),
+            // Column::make('role_name'),
+            Column::make('email'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
                 ->addClass('text-left'),
-
         ];
     }
-
 
     /**
      * Get the filename for export.
      */
     protected function filename(): string
     {
-        return 'Department_' . date('YmdHis');
+        return 'AdminUser_' . date('YmdHis');
     }
 }
