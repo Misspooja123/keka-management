@@ -84,11 +84,11 @@ class AttendanceDataTable extends DataTable
     {
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
-            Column::make('user_name'),
-            Column::make('starttime'),
-            Column::make('endtime'),
-            Column::make('status'),
-            Column::make('description'),
+            Column::make('user_name')->title('User Name'),
+            Column::make('starttime')->title('Start Time'),
+            Column::make('endtime')->title('End Time'),
+            Column::make('status')->title('Status'),
+            Column::make('description')->title('Description'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

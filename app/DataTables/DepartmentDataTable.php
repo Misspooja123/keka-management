@@ -89,14 +89,13 @@ class DepartmentDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->orderable(false),
             Column::make('id')->hidden(),
-            Column::make('name'),
-            Column::make('status'),
+            Column::make('name')->title('Name'),
+            Column::make('status')->title('Status'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
                 ->addClass('text-left'),
-
         ];
     }
 
